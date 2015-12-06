@@ -60,12 +60,15 @@ class HillHike{
 		
 		long long currCount = 0;		
 
-		if(visited < landmarks.size() && landmarks[visited] == currHeight)
-			++ visited;
-		
-		currCount += numPaths(currDistance+1, currHeight, visited, reachedPeek);
-		currCount += numPaths(currDistance+1, currHeight+1, visited, reachedPeek);
-		currCount += numPaths(currDistance+1, currHeight-1, visited, reachedPeek);
+		if(visited < landmarks.size() && landmarks[visited] == currHeight){
+			currCount += numPaths(currDistance+1, currHeight, visited+1, reachedPeek);
+			currCount += numPaths(currDistance+1, currHeight+1, visited+1, reachedPeek);
+			currCount += numPaths(currDistance+1, currHeight-1, visited+1, reachedPeek);
+		}else{		
+			currCount += numPaths(currDistance+1, currHeight, visited, reachedPeek);
+			currCount += numPaths(currDistance+1, currHeight+1, visited, reachedPeek);
+			currCount += numPaths(currDistance+1, currHeight-1, visited, reachedPeek);
+		}
 
 		numOfPaths[currDistance*r1 + currHeight*r2 + visited*r3+ reachedPeek] = currCount;
 
