@@ -1,6 +1,3 @@
-Error Stack over flow on large tet cases.
-TODO: Find a way to either prune the search space or do it iteratively
-
 #include <vector>
 #include <iostream>
 #define MAX(a,b) (a)^(((b)^(a))& -((a)<(b)))
@@ -8,35 +5,70 @@ TODO: Find a way to either prune the search space or do it iteratively
 using namespace std;
 
 class HillHike{
-	public:
-	 long long numPaths(int distance, int maxHeight, vector<int> landmarks){
-		long long count = 0;
-		bool reachedPeek = false;
-		numPaths(--distance, 1, maxHeight, 0,reachedPeek, landmarks, count);
-		std::cout << count ;
-		return count; 
+	private:
+		vector<int> landmarks;
+		long long* numOfPaths;
+
+		int maxDistance;
+		int maxHeight;
+		int r1;
+		int r2;
+		int r3;
 		
-	}
-	
-	void numPaths(int distance, int currHeight, int maxHeight, int visited, bool reachedPeek, vector<int> landmarks, long long &count){
-		if(distance == 0 && currHeight == 0 && landmarks.size() == visited && reachedPeek){
-			++count;
-			return;
-		} else if(distance <= 0 || currHeight <= 0 || currHeight > maxHeight)
-			return;
-	
-	
-		if(currHeight == maxHeight)
-			reachedPeek = true;
-		if(visited < landmarks.size() && landmarks[visited] == currHeight){
-			numPaths(distance-1, currHeight-1, maxHeight, visited+1, reachedPeek, landmarks, count);
-			numPaths(distance-1, currHeight, maxHeight, visited+1, reachedPeek, landmarks, count);
-			numPaths(distance-1, currHeight+1, maxHeight, visited+1, reachedPeek, landmarks, count);
+	public:
+		void init(int distance, int maxHeight, vector<int> landmarks){
+			numOfPaths = (long long *)malloc(sizeof(long long)*(distance+1)*(maxHeight+2 )*(landmarks.size()+1)*2);
+
+			r3 = 2;
+			r2 = (landmarks.size())*2;
+			r1 = (maxHeight )*(landmarks.size())*2;
+
+			this->maxHeight = maxHeight;
+			this->maxDistance = distance;
+			this->landmarks = landmarks;
+
+			//Set the number of paths from each point to -1.
+			for(int i = 0; i < distance; ++i)
+				for(int j = 0; j < maxHeight + 1; ++j)
+					for(int k = 0; k < landmarks.size(); ++k){
+						numOfPaths[i*r1 + j*r2 + k*r3 + 0] = -1;
+						numOfPaths[i*r1 + j*r2 + k*r3 + 1] = -1;
+					}
+
 		}
-		else{
-			numPaths(distance-1, currHeight, maxHeight, visited, reachedPeek, landmarks, count);
-			numPaths(distance-1, currHeight+1, maxHeight, visited, reachedPeek, landmarks, count);
-			numPaths(distance-1, currHeight-1, maxHeight, visited, reachedPeek, landmarks, count);
+		
+	 	long long numPaths(int distance, int maxHeight, vector<int> landmarks){
+			init(distance, maxHeight, landmarks);
+			long long ans = numPaths(1,1,0,false);
+			free(numOfPaths);
+			return ans;
 		}
+	
+	long long numPaths(int currDistance, int currHeight,int visited, bool reachedPeek){
+		if(currDistance == maxDistance){
+			return reachedPeek && currHeight == 0 && visited == landmarks.size();
+			
+		} else if(currHeight <= 0 || currHeight > maxHeight ||  currHeight > maxDistance - currDistance){
+			return 0;
+			
+		} else if( visited < landmarks.size() && numOfPaths[currDistance*r1 + currHeight*r2 + visited*r3 + reachedPeek] != -1){
+			
+			return numOfPaths[currDistance*r1 + currHeight*r2 + visited*r3+ reachedPeek];
+		}
+		
+		reachedPeek = reachedPeek || currHeight == maxHeight;
+		
+		long long currCount = 0;		
+
+		if(visited < landmarks.size() && landmarks[visited] == currHeight)
+			++ visited;
+		
+		currCount += numPaths(currDistance+1, currHeight, visited, reachedPeek);
+		currCount += numPaths(currDistance+1, currHeight+1, visited, reachedPeek);
+		currCount += numPaths(currDistance+1, currHeight-1, visited, reachedPeek);
+
+		numOfPaths[currDistance*r1 + currHeight*r2 + visited*r3+ reachedPeek] = currCount;
+
+		return currCount;
 	}
 };
