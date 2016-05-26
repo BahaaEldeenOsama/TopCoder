@@ -21,7 +21,7 @@ public:
 			mult[ i ] *= prod;
 		}
 		 
-	double sum = 0;
+		double sum = 0;
 		int pow10 = (int)pow(10, N-1);
 		for(int i = 0; i < N; ++i) {
 			if( validDigits[ i ].size() == 0) return -1;
@@ -44,14 +44,15 @@ public:
 			for(int j = 0; j < 3 ; ++j){
 				char c = indicator[i][j + n];
 				
-				if( c == '#' && j < 2) digits[ 1 ] = false;
 				if( c == '#' && j == 1 && i > 0 && i < 4) digits[ 0 ] = false;
+				if( c == '#' && j < 2) digits[ 1 ] = false;
 				if( c == '#' && ( ( j < 2 && i == 1 ) || ( j > 0 && i == 3 ) )) digits[ 2 ] = false;
 				if( c == '#' && j < 2 && (i == 1 || i == 3) ) digits[ 3 ] = false;
 
 				if( c == '#' && (( i > 2 && j < 2) || ( j == 1 && i < 2) ) ) digits[ 4 ] = false;
 				if( c == '#' && ( (j > 0 && i == 1) || ( j < 2 && i == 3) ) ) digits[ 5 ] = false;
 				if( c == '#' && ( ( j == 1 && i == 4 ) || ( i == 1 && j > 0) ) ) digits[ 6 ]= false;
+				
 				if( c == '#' && ( i < 2 && j < 2)) digits[ 7 ] = false;
 				if( c == '#' && ( (i == 1 || i == 3 ) && j == 1) ) digits[ 8 ] = false;
 				if( c == '#' && ( ( i == 1 && j == 1) || (i == 3 && j < 2 ))) digits[ 9 ] = false;
