@@ -7,46 +7,26 @@ using namespace std;
 
 class GCDGraph{
 public:
-	string possible(int n, int k, int x, int y){
-
-		string ans ="";
-		bool canReach = std::__gcd(x,y) > k;
+	string possible(long n, long k, long x, long y){
 		
-		unordered_set<int> seen;
-		set<int> *unseen = new set<int>(), *nextUnseen = new set<int>();
-		if( !canReach) for(int i=k+1; i <= n; ++i) unseen->insert(i);
-		
-		queue<int> q;
+		queue<int> q, unseen;
 		q.push(x);
-		while(q.size() > 0){
-			int top = q.front(); q.pop(); 
-			
-			
-			if(top == y){
-				canReach = true;
-				break;
-			}
-			if(seen.count(top) == 0){
-				seen.insert(top);
-				
-				for(auto it = unseen->begin(); it != unseen->end();++it ){
-					
-					if( seen.count(*it) == 0 && std::__gcd(*it, top) > k){
-						q.push(*it);
-					} else {
-						nextUnseen->insert(*it);
-					}
-				}
-				unseen->clear();
-				swap(unseen, nextUnseen);
-				
-			}
-			
-		}		
-		if(canReach) ans = "Possible";
-		else ans = "Impossible";
+		for(int i=n; i > k; --i) unseen.push(i);
 		
-		return ans;
+		while(q.size() > 0){
+			long top = q.front(); q.pop(); 
+			
+			int m = unseen.size();
+			for(; m>0; --m){
+				long i = unseen.front(); unseen.pop();
+				int tmp = std::__gcd(i, top);				
+				int tmp2 = std::__gcd(y, i);				
+				
+				if(tmp > k && tmp2 > k && i * y <= n * tmp2) return "Possible";
+				else if( tmp > k ) q.push(i);
+				else unseen.push(i);	
+			}
+		}		
+		return "Impossible";
 	}
-
 };
