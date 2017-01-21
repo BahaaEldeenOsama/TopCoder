@@ -7,7 +7,7 @@ public:
 		int days = min(f, d/x);
 		f -= days;
 		d -= x*days;
-		days += d / (x+p);
+		days += d / ((long)x+p);
 		
 		return days;
 	}	
